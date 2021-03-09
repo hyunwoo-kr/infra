@@ -26,6 +26,7 @@ vagrant up
 
 ### Step2. ansible용 ssh key copy
 
+> root password = vagrant
 ```
 ssh-keygen -f "/home/manager/.ssh/known_hosts" -R "161.100.6.10"
 ssh-copy-id root@161.100.6.10

@@ -107,3 +107,7 @@ vagrant box list
 ----------------------
 centos_base/7    (hyperv, 0)
 ```
+
+## 참고
+
+> root password = vagrant
