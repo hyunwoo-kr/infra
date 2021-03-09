@@ -1,0 +1,15 @@
+---
+- name: Ansible remote SSH Set
+  hosts: dmz-web1
+  gather_facts: no
+  tasks:
+    - name: ssh 접속 초기화
+      local_action: shell ssh-keygen -f "/home/manager/.ssh/known_hosts" -R "{{ item }}"
+      with_items:
+        - "161.100.6.10"
+      ignore_errors: yes
+    - name: ssh-keyscan
+      local_action: shell ssh-keyscan -H "{{ item }}" >> /home/manager/.ssh/known_hosts
+      with_items:
+        - "161.100.6.10"
+      ignore_errors: yes

@@ -1,0 +1,21 @@
+---
+- name: Dependency install
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    # - name: Install the 'Development tools' package group
+    #   yum:
+    #     name: "@Development tools"
+    #     state: present
+    - name: dependency install
+      yum:
+        name:
+          - gcc
+          - gcc-c++
+          - zlib-devel
+          - pcre-devel
+          - perl
+          - wget
+          - gzip
+        state: present

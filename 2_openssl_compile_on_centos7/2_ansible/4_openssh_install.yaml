@@ -1,0 +1,54 @@
+---
+- name: lets openssl 1.1.1g install CentOS7
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: download openssh
+      get_url:
+        url: https://www.openssl.org/source/openssl-1.1.1g.tar.gz
+        dest: /usr/local/src
+        mode: '0755'
+    - name: unpack
+      shell: |
+        cd /usr/local/src
+        tar xvfz openssl-1.1.1g.tar.gz
+    - name: config set
+      shell: |
+        cd /usr/local/src/openssl-1.1.1g
+        ./config \
+        --prefix=/usr/local/ssl \
+        --openssldir=/usr/local/ssl shared zlib
+    - name: make && make install
+      shell: |
+        cd /usr/local/src/openssl-1.1.1g
+        make && make install
+    - name: openssl-1.1.1g.conf 생성및 내용추가
+      shell: |
+        echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1g.conf
+
+    - name: Create symbolic link - libssl.so.1.1
+      file:
+        src: /usr/local/ssl/lib/libssl.so.1.1
+        dest: /usr/lib64/libssl.so.1.1
+        state: link
+    - name: Create symbolic link - libcrypto.so.1.1
+      file:
+        src: /usr/local/ssl/lib/libcrypto.so.1.1
+        dest: /usr/lib64/libcrypto.so.1.1
+        state: link
+    - name: Create symbolic link - openssl
+      file:
+        src: /usr/local/ssl/bin/openssl
+        dest: /bin/openssl
+        state: link
+
+    - name: openssl version check
+      shell: openssl version
+      register: output
+    - debug: msg="{{ output.stdout }}"
+
+    - name: openssl 지원 프로토콜 확인
+      shell: openssl ciphers -v | awk '{print $2}' | sort | uniq
+      register: output
+    - debug: msg="{{ output.stdout_lines }}"
