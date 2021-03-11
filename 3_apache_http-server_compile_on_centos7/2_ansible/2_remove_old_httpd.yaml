@@ -1,0 +1,8 @@
+---
+- name: Remove old httpd
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: yum remove httpd httpd-*
+      shell: yum remove -y httpd httpd-*

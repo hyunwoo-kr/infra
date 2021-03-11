@@ -1,0 +1,27 @@
+---
+- name: Dependency install
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: 빌드 환경설정
+      yum:
+        name:
+          - make
+          - gcc
+          - gcc-c++
+          - autoconf
+          - automake
+          - libtool
+          - pkgconfig
+          - findutils
+        state: present
+    - name: 필요한 Header 파일 설치
+      yum:
+        name:
+          - zlib-devel
+          - openldap-devel
+          - pcre-devel
+          - openssl-devel
+          - libxml2-devel
+        state: present

@@ -1,0 +1,8 @@
+- import_playbook: 1_ssh_init.yaml
+- import_playbook: 2_remove_old_httpd.yaml
+- import_playbook: 3_dependency_install.yaml
+- import_playbook: 4_apr_install.yaml
+- import_playbook: 5_expat_install.yaml
+- import_playbook: 6_apr-util_install.yaml
+- import_playbook: 7_pcre_install.yaml
+- import_playbook: 8_http-server_install.yaml

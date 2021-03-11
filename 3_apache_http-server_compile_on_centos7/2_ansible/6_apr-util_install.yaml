@@ -1,0 +1,29 @@
+---
+- name: Apr-util install on CentOS 7
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: download
+      get_url:
+        url: https://downloads.apache.org//apr/apr-util-1.6.1.tar.gz
+        dest: /usr/local/src/apr-util-1.6.1.tar.gz
+        mode: '0755'
+
+    - name: 설치
+      shell: |
+        cd /usr/local/src
+        tar xvfz apr-util-1.6.1.tar.gz
+        rm -rf /usr/local/src/apr-util-1.6.1.tar.gz
+
+        cd /usr/local/src/apr-util-1.6.1
+        ./configure --prefix=/usr/local/apr-util \
+        --with-apr=/usr/local/apr \
+        --with-expat=/usr/local/expat
+
+        make && make install
+    - name: 설치확인
+      shell: |
+        /usr/local/apr-util/bin/apu-1-config --version
+      register: output
+    - debug: msg="{{ output.stdout_lines }}"

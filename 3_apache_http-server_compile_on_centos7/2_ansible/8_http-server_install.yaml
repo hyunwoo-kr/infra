@@ -1,0 +1,60 @@
+---
+- name: Apache HTTP Server install on CentOS 7
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: download
+      get_url:
+        url: https://downloads.apache.org//httpd/httpd-2.4.46.tar.gz
+        dest: /usr/local/src/httpd-2.4.46.tar.gz
+        mode: '0755'
+
+    - name: 설치
+      shell: |
+        cd /usr/local/src
+        tar xvfz httpd-2.4.46.tar.gz
+        rm -rf /usr/local/src/httpd-2.4.46.tar.gz
+
+        cd /usr/local/src/httpd-2.4.46
+        ./configure \
+        --prefix=/data/apache2 \
+        --with-apr=/usr/local/apr \
+        --with-apr-util=/usr/local/apr-util \
+        --with-pcre=/usr/local/pcre \
+        --with-ssl=/usr/local/ssl \
+        --enable-all \
+        --enable-so \
+        --with-mpm=prefork
+
+        make && make install
+    - name: 서비스 등록
+      shell: |
+        echo '
+        [Unit]
+        Description=The Apache HTTP Server
+        After=syslog.target
+        After=network.target
+
+
+        [Service]
+        # 자식 프로세스 생성이 완료되는 단계까지를 systemd가 시작이 완료되었다고 판단하게 된다.
+        Type=forking
+        PIDFile=/data/apache2/logs/httpd.pid
+        #시작 명령을 정의
+        ExecStart=/data/apache2/bin/apachectl start
+        #reload 명령 정의
+        ExecReload=/data/apache2/bin/apachectl graceful
+        #종료 명령 정의
+        ExecStop=/data/apacher2/bin/apachectl graceful-stop
+        PrivateTmp=true
+        LimitNOFILE=infinity
+
+        [Install]
+        WantedBy=multi-user.target
+        ' > /etc/systemd/system/httpd.service
+    - name: daemon-reload
+      shell: |
+        systemctl daemon-reload
+        systemctl enable httpd
+        systemctl start httpd

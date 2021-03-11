@@ -1,0 +1,26 @@
+---
+- name: Expat install on CentOS 7
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: download
+      get_url:
+        url: https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.gz
+        dest: /usr/local/src/expat-2.2.9.tar.gz
+        mode: '0755'
+
+    - name: 설치
+      shell: |
+        cd /usr/local/src
+        tar xvfz expat-2.2.9.tar.gz
+        rm -rf /usr/local/src/expat-2.2.9.tar.gz
+        cd /usr/local/src/expat-2.2.9
+        ./configure --prefix=/usr/local/expat
+        make && make install
+
+    - name: 설치확인
+      shell: |
+        /usr/local/expat/bin/xmlwf -v
+      register: output
+    - debug: msg="{{ output.stdout_lines }}"

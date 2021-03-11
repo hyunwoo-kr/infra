@@ -38,5 +38,17 @@ cd 2_ansible
 ansible-playbook -i inventory.ini 0_total.yaml
 ```
 
+### Step4. 만들어 진 box를 이후 테스트를 위해 export/add 해 놓자
+
+> openssl 이 설치된 box를 export 하기
+```
+vagrant package --output CentOS-7-x86_64-Vagrant-openssl.HyperV.box
+```
+
+> box add 하기
+
+```
+vagrant box add centos_openssl/7 ./CentOS-7-x86_64-Vagrant-openssl.HyperV.box
+```
 ## Manual 설치
 [Apache HTTPD 테스트용 Centos7 구성 - 2차](https://hyunwoo-kr.github.io/2021/03/apache-httpd-%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%9A%A9-centos7-%EA%B5%AC%EC%84%B1-2%EC%B0%A8/)

@@ -1,0 +1,27 @@
+---
+- name: Pcre install on CentOS 7
+  hosts: dmz-web1
+  become: true
+  gather_facts: no
+  tasks:
+    - name: download
+      get_url:
+        url: https://ftp.pcre.org/pub/pcre/pcre-8.44.tar.gz
+        dest: /usr/local/src/pcre-8.44.tar.gz
+        mode: '0755'
+
+    - name: 설치
+      shell: |
+        cd /usr/local/src
+        tar xvfz pcre-8.44.tar.gz
+        rm -rf /usr/local/src/pcre-8.44.tar.gz
+
+        cd /usr/local/src/pcre-8.44
+        ./configure --enable-utf8 --prefix=/usr/local/pcre
+
+        make && make install
+    - name: 설치확인
+      shell: |
+        /usr/local/pcre/bin/pcre-config --version
+      register: output
+    - debug: msg="{{ output.stdout_lines }}"
